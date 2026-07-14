@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to right, #e0f7e9, #f4fbe9);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    h1 {
+        font-size: 3rem;
+        color: #2e7d32;
+        margin-bottom: 30px;
+        text-align: center;
+        text-shadow: 2px 2px 4px rgba(0, 100, 0, 0.1);
+        animation: slideDown 1s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    form {
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 128, 0, 0.2);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        animation: fadeIn 1.2s ease-in-out;
+        margin-bottom: 30px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-upload {
+        border: 2px dashed #4caf50;
+        border-radius: 15px;
+        display: inline-block;
+        padding: 30px 60px;
+        cursor: pointer;
+        margin: 20px 0;
+        transition: all 0.3s;
+        background-color: #f8fff8;
+    }
+
+    .custom-file-upload:hover {
+        background-color: #f0fff0;
+        border-color: #388e3c;
+    }
+
+    .file-info {
+        margin-top: 10px;
+        font-style: italic;
+        color: #666;
+    }
+
+    button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 25px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 128, 0, 0.3);
+        margin-top: 15px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    .result-container {
+        display: none;
+        margin-top: 40px;
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .result {
+        padding: 25px;
+        background: #eaffea;
+        border: 2px dashed #2e7d32;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 0 15px rgba(0, 128, 0, 0.1);
+        animation: zoomIn 0.8s ease-in;
+    }
+
+    @keyframes zoomIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .result h2 {
+        color: #1b5e20;
+        margin-bottom: 15px;
+    }
+
+    .result p {
+        font-size: 1.1rem;
+        color: #333;
+    }
+
+    .result-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .image-container {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .image-container img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 100, 0, 0.15);
+    }
+
+    .diagnosis {
+        flex: 1;
+        min-width: 300px;
+        text-align: left;
+        padding: 15px;
+    }
+
+    .diagnosis-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #b2dfdb;
+    }
+
+    .diagnosis-item:last-child {
+        border-bottom: none;
+    }
+
+    .treatment {
+        background-color: #f1f8e9;
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 2.2rem;
+        }
+
+        form {
+            padding: 20px;
+        }
+
+        .result-content {
+            flex-direction: column;
+        }
+
+        .image-container,
+        .diagnosis {
+            min-width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('image');
+        const fileInfo = document.querySelector('.file-info');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                const fileName = e.target.files[0]?.name || 'No file selected';
+                fileInfo.textContent = `Selected: ${fileName}`;
+            });
+        }
+
+        {% if prediction %}
+        const resultContainer = document.querySelector('.result-container');
+        if (resultContainer) {
+            resultContainer.style.display = 'block';
+        }
+        {% endif %}
+    });
+</script>
+
+<div class="container">
+    <h1>Crop Disease Predictor</h1>
+
+    <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+        <label class="custom-file-upload" for="image">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p>Choose a leaf image</p>
+        </label>
+        <p class="file-info">No file selected</p>
+        <input type="file" name="image" id="image" accept="image/*" required>
+        <button type="submit">Predict Disease</button>
+    </form>
+
+    <div class="result-container">
+        <div class="result">
+            <h2>Disease Diagnosis</h2>
+
+            <div class="result-content">
+                <div class="image-container">
+                    <img src="{{ url_for('static', filename=image_path) }}" alt="Uploaded Leaf Image"
+                        id="diagnosis-image">
+                </div>
+
+                <div class="diagnosis">
+                    <div class="diagnosis-item">
+                        <h3>Diagnosis Result</h3>
+                        <p>{{ prediction }}</p>
+                    </div>
+
+                    <div class="diagnosis-item">
+                        <h3>Prevention Tips</h3>
+                        <p>{{ prevention }}</p>
+                    </div>
+
+                    <div class="treatment">
+                        <h3>Recommended Treatment</h3>
+                        <p>Based on our analysis, we recommend implementing {{ prevention|lower }} for the {{
+                            prediction|lower }} diagnosis. Regular monitoring of plant health and proper agricultural
+                            practices will help prevent recurrence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+{% endblock %}

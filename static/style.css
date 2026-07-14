@@ -1,0 +1,191 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body,
+html {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+/* Background video fallback styling */
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    filter: brightness(0.6);
+}
+
+/* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.navbar a {
+    color: #fff;
+    margin: 0 25px;
+    font-size: 18px;
+    text-decoration: none;
+    position: relative;
+    transition: color 0.3s;
+}
+
+.navbar a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background-color: #00ffc3;
+    transition: width 0.3s ease-in-out;
+}
+
+.navbar a:hover::after {
+    width: 100%;
+}
+
+.navbar a:hover {
+    color: #00ffc3;
+}
+
+/* Page Container */
+.container {
+    padding: 80px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Glass Effect Box */
+.glass-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    width: 90%;
+    max-width: 500px;
+    animation: fadeInUp 1s ease forwards;
+}
+
+/* Upload Inputs & Buttons */
+input[type="file"],
+select,
+input[type="submit"],
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+input[type="file"],
+select {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+input[type="submit"],
+button {
+    background-color: #00ffc3;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover,
+button:hover {
+    background-color: #00cfa3;
+}
+
+/* Result Display */
+.result-box {
+    margin-top: 40px;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.6);
+    border-left: 4px solid #00ffc3;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.result-box h2 {
+    margin-bottom: 10px;
+    color: #00ffc3;
+}
+
+.result-box p {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Uploaded Image */
+.uploaded-image {
+    margin-top: 20px;
+    max-width: 300px;
+    border: 3px solid #00ffc3;
+    border-radius: 15px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .navbar a {
+        font-size: 16px;
+        margin: 0 12px;
+    }
+
+    .glass-box {
+        padding: 30px 20px;
+    }
+
+    input[type="submit"],
+    button {
+        font-size: 15px;
+    }
+}

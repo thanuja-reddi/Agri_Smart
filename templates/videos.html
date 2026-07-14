@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f5f7fa;
+        color: #222;
+        margin: 0;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 30px 0 10px;
+        color: #2c3e50;
+        font-size: 2.5rem;
+    }
+
+    .filter-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    select {
+        padding: 10px 15px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background: white;
+    }
+
+    .video-section {
+        margin: 30px auto;
+        width: 90%;
+    }
+
+    .category-title {
+        margin: 10px 0 20px;
+        font-size: 1.8rem;
+        color: #34495e;
+        text-align: left;
+        border-bottom: 3px solid #27ae60;
+        padding-bottom: 5px;
+    }
+
+    .video-grid {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .video-card {
+        flex: 1 1 calc(33.333% - 20px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .video-card iframe {
+        width: 100%;
+        height: 250px;
+        border: none;
+    }
+
+    @media screen and (max-width: 992px) {
+        .video-card {
+            flex: 1 1 calc(50% - 20px);
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        .video-card {
+            flex: 1 1 100%;
+        }
+
+        .video-card iframe {
+            height: 200px;
+        }
+    }
+</style>
+
+<h1>Educational Videos</h1>
+
+<div class="filter-container">
+    <label for="category-select">Select Category:</label>
+    <select id="category-select" onchange="filterVideos()">
+        <option value="all">All</option>
+        <option value="crops">Crops</option>
+        <option value="vermi">Vermicompost</option>
+        <option value="advanced">Advanced Farming</option>
+    </select>
+</div>
+
+<!-- Crops -->
+<div class="video-section" id="section-crops">
+    <div class="category-title">Crops</div>
+    <div class="video-grid">
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/tOlVDxnGQfA" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/K1kBDFXESXE" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/ookOIp1EemA" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Vermicompost -->
+<div class="video-section" id="section-vermi">
+    <div class="category-title">Vermicompost</div>
+    <div class="video-grid">
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/3s6fU-hkfiI" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/A4KKZPq-sQ8" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/MrOH-bUi7AM" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+    </div>
+</div>
+
+<!-- Advanced Farming -->
+<div class="video-section" id="section-advanced">
+    <div class="category-title">Advanced Farming</div>
+    <div class="video-grid">
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/Ulf8E1XnhgI" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/rXT5HwH-l9w" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+        <div class="video-card"><iframe src="https://www.youtube.com/embed/qTbZv5UkoB4" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterVideos() {
+        const value = document.getElementById("category-select").value;
+        const sections = {
+            crops: document.getElementById("section-crops"),
+            vermi: document.getElementById("section-vermi"),
+            advanced: document.getElementById("section-advanced")
+        };
+
+        for (let key in sections) {
+            sections[key].style.display = (value === "all" || value === key) ? "block" : "none";
+        }
+    }
+
+    // Pause other videos when one starts playing
+    const iframes = document.querySelectorAll('iframe');
+    window.addEventListener('message', function (e) {
+        if (typeof e.data === 'string' && e.data.includes('playVideo')) {
+            iframes.forEach(frame => {
+                if (e.source !== frame.contentWindow) {
+                    frame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

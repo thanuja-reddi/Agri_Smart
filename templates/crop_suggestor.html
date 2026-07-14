@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="text-center mt-4">Crop Suggestor</h2>
+
+<form method="POST" action="{{ url_for('crop_suggestor') }}" class="mx-auto mt-4" style="max-width: 400px;">
+    <div class="form-group mb-3">
+        <label for="season">Select Season:</label>
+        <select class="form-control" name="season" id="season" required>
+            <option value="">--Choose Season--</option>
+            <option value="Kharif">Kharif</option>
+            <option value="Rabi">Rabi</option>
+            <option value="Zaid">Zaid</option>
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="water">Water Requirement:</label>
+        <select class="form-control" name="water" id="water" required>
+            <option value="">--Choose Water Level--</option>
+            <option value="High">High</option>
+            <option value="Moderate">Moderate</option>
+            <option value="Low">Low</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success w-100">Suggest Crops</button>
+</form>
+
+{% if crops %}
+<div class="mt-5">
+    <h4 class="text-center mb-4">Suggested Crops:</h4>
+    <div class="d-flex flex-wrap justify-content-center gap-4">
+        {% for crop in crops %}
+        <div class="card shadow" style="width: 250px;">
+            {% set filename = crop.name.lower().replace(' ', '_').replace('(', '').replace(')', '') + '.jpeg' %}
+            <img src="{{ url_for('static', filename='images/' + filename) }}" class="card-img-top"
+                alt="{{ crop.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ crop.name }}</h5>
+                <p class="card-text">Growth Time: {{ crop.growth_time }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
