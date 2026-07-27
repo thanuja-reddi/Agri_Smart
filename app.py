@@ -13,8 +13,17 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Load trained model
-MODEL_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "model", "plant_disease_model.h5")
-model = load_model(MODEL_PATH)
+MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "model",
+    "plant_disease_model.tflite"
+)
+
+interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+interpreter.allocate_tensors()
+
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
 # Disease classes and prevention tips
 disease_classes = {
@@ -126,12 +135,24 @@ def predict():
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(file_path)
 
-    img = image.load_img(file_path, target_size=(224, 224))
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0) / 255.0
+    img = Image.open(file_path).convert("RGB")
 
-    prediction = model.predict(img_array)
-    predicted_class_index = np.argmax(prediction)
+# Resize to match your trained model
+img = img.resize((160, 160))
+
+img_array = np.array(img, dtype=np.float32)
+
+# MobileNetV2 preprocessing
+img_array = (img_array / 127.5) - 1.0
+
+img_array = np.expand_dims(img_array, axis=0)
+
+interpreter.set_tensor(input_details[0]["index"], img_array)
+interpreter.invoke()
+
+prediction = interpreter.get_tensor(output_details[0]["index"])
+
+predicted_class_index = np.argmax(prediction)
     predicted_disease = disease_classes.get(predicted_class_index, "Unknown Disease")
     prevention_tip = preventions.get(predicted_class_index, "No prevention tip available.")
 
@@ -157,4 +178,4 @@ def videos():
 
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
